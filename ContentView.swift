@@ -1,53 +1,68 @@
 //
 //  ContentView.swift
-//  Bullseye with SwiftUI
+//  Shopping List 2
 //
-//  Created by Tony Hong on 2/17/22.
+//  Created by Tony Hong on 3/27/22.
 //
 
 import SwiftUI
 
+class Items: Identifiable {
+    
+    var itemName: String
+    
+    var quantity: String
+    
+    init(itemName: String, quantity: String) {
+        
+        self.itemName = itemName
+        
+        self.quantity = quantity
+    }
+    
+}
 
 struct ContentView: View {
     
-    @State var num: Double = 50
-    @State var toggle = false
+    @State var tempItemName: String = ""
+    @State var tempQuantity: String = ""
     
+    @State var list = [
+        Items(itemName: "Bananas", quantity: "3"),
+        Items(itemName: "Apples", quantity: "4"),
+        Items(itemName: "Eggs", quantity: "12")
+    ]
+        
     var body: some View {
-        VStack() {
-            HStack() {
-                VStack() {
-                    Text("High Score")
-                    Text("0")
+        NavigationView {
+            List {
+                ForEach(list) { listItem in
+                    CustomCell(itemName: listItem.itemName, quantity: listItem.quantity)
                 }
-                .padding(.leading, 20)
-                .padding(.top, 20)
-                Spacer()
-                VStack() {
-                    Text("Current Level")
-                    Text("1")
+                HStack {
+                    TextField("Item Name", text: $tempItemName)
+                    Spacer()
+                    TextField("Quantity", text: $tempQuantity)
                 }
-                .padding(.trailing, 20)
-                .padding(.top, 20)
-                
-            }
-            VStack () {
-                Text("Move the slider to:").font(.system(size: 30))
-                Text("\(num, specifier: "%.0f")").font(.system(size: 30))
-                Slider(value: $num, in: 0...100)
-                .padding(.leading, 20)
-                .padding(.trailing, 20)
-                Button("Check", action: {
-                    print("The number is: ")
-                })
-            }
-            .padding(.top, 100)
-            Spacer()
-            VStack() {
-                Text("Exact Mode?")
-                Toggle("", isOn: $toggle).padding(.trailing, 160)
-            }.padding()
-            
+                Button("Add New Item") {
+                    if tempQuantity != "" && tempItemName != "" {
+                        addItem()
+                    }
+                }
+                Button("Delete") {
+                    removeItem()
+                }
+            }.navigationTitle("Shopping List")
         }
+    }
+    
+    func addItem() {
+        list.append(Items(itemName: tempItemName, quantity: tempQuantity))
+        tempItemName = ""
+        tempQuantity = ""
+    }
+    
+    func removeItem() {
+        list.removeLast()
     }
 }
